@@ -48,9 +48,9 @@ def scrape_articles(url, Test=True):
             day, month, year = date_match.groups()
             months = {'janvier':'01','février':'02','mars':'03','avril':'04','mai':'05','juin':'06',
                      'juillet':'07','août':'08','septembre':'09','octobre':'10','novembre':'11','décembre':'12'}
-            date_formatted = f"{year}{months.get(month,'01')}{day.zfill(2)}"
+            format_date = f"{year}{months.get(month,'01')}{day.zfill(2)}"
         else:
-            date_formatted = date
+            format_date = date
             
         # Images dans l'article
         images = {}
@@ -62,13 +62,13 @@ def scrape_articles(url, Test=True):
                     images[f'image_{i}'] = {'url': img_url, 'caption': caption}
         
         # Afficher les résultats
-        date_formatted = f"{date_formatted[:4]}-{date_formatted[4:6]}-{date_formatted[6:]}"
+        format_date = f"{format_date[:4]}-{format_date[4:6]}-{format_date[6:]}"
 
         print(f"\nTitre: {title}")
         print(f"Miniature: {thumbnail}")
         print(f"Sous-catégorie: {subcategory}")
         print(f"Résumé: {summary}")
-        print(f"Date: {date_formatted}")
+        print(f"Date: {format_date}")
         print(f"Auteur: {auteur2}")
         #Tester avec un contenu limité pour ne pas déborder
         print(f"Contenu: {content[:200]}...")
