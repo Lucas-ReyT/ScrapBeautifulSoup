@@ -57,9 +57,10 @@ def scrape_articles(url, Test=True):
         if content_div:
             for i, img in enumerate(content_div.find_all('img'), 1):
                 img_url = img.get('src') or img.get('data-lazy-src')
+                if not img_url or img_url.startswith("data:image"):
+                    continue
                 caption = img.get('alt', '') or img.get('title', '')
-                if img_url:
-                    images[f'image_{i}'] = {'url': img_url, 'caption': caption}
+                images[f'image_{i}'] = {'url': img_url, 'caption': caption}
         
         # Afficher les résultats
         format_date = f"{format_date[:4]}-{format_date[4:6]}-{format_date[6:]}"
