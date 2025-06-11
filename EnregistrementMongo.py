@@ -23,7 +23,7 @@ def scrape_articles(url, Test=False):
 
     for article in articles:
         img = article.find('img')
-        thumbnail = img['data-lazy-src'] if img else None
+        thumbnail = img.get('data-lazy-src') or img.get('src') if img else None
         
         meta = article.find('div', class_='entry-meta')
         subcategory = meta.find('span', class_='favtag').get_text().strip()
@@ -57,13 +57,17 @@ def scrape_articles(url, Test=False):
             format_date = date
         
         images = {}
+        image_index = 1
+
         if content_div:
-            for i, img in enumerate(content_div.find_all('img'), 1):
+            for img in content_div.find_all('img'):
                 img_url = img.get('src') or img.get('data-lazy-src')
                 if not img_url or img_url.startswith("data:image"):
                     continue
+
                 caption = img.get('alt', '') or img.get('title', '')
-                images[f'image_{i}'] = {'url': img_url, 'caption': caption}
+                images[f'image_{image_index}'] = {'url': img_url, 'caption': caption}
+                image_index += 1
         
         # Préparer le document MongoDB
         format_date = f"{format_date[:4]}-{format_date[4:6]}-{format_date[6:]}"
