@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 
 #Pour tester avec un seul article = False, sinon false pour scrap à l'infini (mais fini par crash)
-def scrape_articles(url, Test=True):
+def scrape_articles(url, Test=False):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
@@ -16,7 +16,7 @@ def scrape_articles(url, Test=True):
 
     for article in articles:
         img = article.find('img')
-        thumbnail = img['data-lazy-src'] if img else None
+        thumbnail = img.get('data-lazy-src') or img.get('src') if img else None
         
         meta = article.find('div', class_='entry-meta')
         subcategory = meta.find('span', class_='favtag').get_text().strip()
@@ -52,16 +52,20 @@ def scrape_articles(url, Test=True):
         else:
             format_date = date
             
-        # Images dans l'article
+        # Images dans l'article (j'ai eu un problème de scrapping sur cette partie)
         images = {}
+        image_index = 1
+
         if content_div:
-            for i, img in enumerate(content_div.find_all('img'), 1):
+            for img in content_div.find_all('img'):
                 img_url = img.get('src') or img.get('data-lazy-src')
                 if not img_url or img_url.startswith("data:image"):
                     continue
+
                 caption = img.get('alt', '') or img.get('title', '')
-                images[f'image_{i}'] = {'url': img_url, 'caption': caption}
-        
+                images[f'image_{image_index}'] = {'url': img_url, 'caption': caption}
+                image_index += 1
+
         # Afficher les résultats
         format_date = f"{format_date[:4]}-{format_date[4:6]}-{format_date[6:]}"
 
